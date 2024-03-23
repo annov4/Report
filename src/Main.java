@@ -2,7 +2,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -29,12 +28,8 @@ public class Main {
         list.add(report7);
         list.add(report8);
 
-        System.out.println(Report.reportHistory(list, "no_punkz", 3)
-                .stream()
-                .map(report -> report.username + "\n" + report.date + "\n" + report.hours + "\n" + report.message + "\n-----------------\n")
-                .collect(Collectors.joining()));
+        System.out.println(Report.reportHistory(list, "no_punkz", 3));
     }
-
     public static class Report {
         Long id;
         String username;
@@ -50,14 +45,22 @@ public class Main {
             this.message = message;
         }
 
-        public static List<Report> reportHistory(List<Report> reports, String username, int count) {
-            List<Report> result = new ArrayList<>();
+        public static String reportHistory(List<Report> reports, String username, int count) {
+            StringBuilder sb = new StringBuilder();
+
             reports.stream()
                     .filter(report -> report.username.equals(username)) //фильтруем по имени
                     .sorted(Comparator.comparing(Report::getDate).reversed()) //сортируем по дате в обратном порядке
                     .limit(count) //ограничиваем количество результатов
-                    .forEach(report -> result.add(0, report)); //добавляем отчет в начало списка
-            return result;
+                    .forEach(report -> {
+                        sb.insert(0, "-----------------\n")
+                                .insert(0, report.message + "\n")
+                                .insert(0, report.hours + "\n")
+                                .insert(0, report.getDate() + "\n")
+                                .insert(0, report.username + "\n");
+                    });
+
+            return sb.toString();
         }
 
         public LocalDate getDate() {
