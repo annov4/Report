@@ -2,6 +2,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -28,14 +29,10 @@ public class Main {
         list.add(report7);
         list.add(report8);
 
-        List<Report> filteredReports = Report.reportHistory(list, "no_punkz", 3);
-        for (Report report : filteredReports) {
-            System.out.println(report.username);
-            System.out.println(report.date);
-            System.out.println(report.hours);
-            System.out.println(report.message);
-            System.out.println("-----------------");//как в телеге
-        }
+        System.out.println(Report.reportHistory(list, "no_punkz", 3)
+                .stream()
+                .map(report -> report.username + "\n" + report.date + "\n" + report.hours + "\n" + report.message + "\n-----------------\n")
+                .collect(Collectors.joining()));
     }
 
     public static class Report {
